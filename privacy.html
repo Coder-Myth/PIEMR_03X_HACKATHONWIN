@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — Memory</title>
+<meta name="description" content="Memory's Privacy Policy. Understand exactly what data we collect, how we store it, and how you can delete it.">
+<link rel="icon" type="image/jpeg" href="favicon.jpg">
+<link rel="apple-touch-icon" href="favicon.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --dark:       #1A3929;
+    --text:       #1A1A1A;
+    --text-2:     #4A4A4A;
+    --text-muted: #8A8A8A;
+    --green:      #3D7A58;
+    --green-pale: #E8F5EE;
+    --border:     #E0D8C8;
+    --panel:      #F9F6F0;
+    --white:      #FFFFFF;
+    --cream:      #EDE5D3;
+  }
+  html, body {
+    background: var(--cream);
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+  }
+  /* NAV */
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--dark);
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .nav-brand svg { width: 20px; height: 20px; }
+  .nav-back {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--green);
+    text-decoration: none;
+  }
+  /* HERO */
+  .hero {
+    background: var(--dark);
+    color: white;
+    padding: 56px 24px 48px;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  .hero h1 { font-size: 36px; font-weight: 700; line-height: 1.2; margin-bottom: 14px; }
+  .hero p  { font-size: 16px; color: rgba(255,255,255,0.7); max-width: 520px; margin: 0 auto; line-height: 1.6; }
+  .hero-meta { margin-top: 28px; font-size: 13px; color: rgba(255,255,255,0.5); }
+  /* CONTENT */
+  .content { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+  .toc {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 40px;
+  }
+  .toc-title { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+  .toc ol   { padding-left: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .toc a    { font-size: 14px; color: var(--green); text-decoration: none; font-weight: 500; }
+  .toc a:hover { text-decoration: underline; }
+  .section { margin-bottom: 44px; scroll-margin-top: 80px; }
+  .section h2 {
+    font-size: 22px; font-weight: 700; color: var(--dark);
+    margin-bottom: 14px; padding-bottom: 12px;
+    border-bottom: 2px solid var(--green-pale);
+  }
+  .section p  { font-size: 15px; color: var(--text-2); line-height: 1.7; margin-bottom: 14px; }
+  .section ul { padding-left: 20px; margin-bottom: 14px; }
+  .section li { font-size: 15px; color: var(--text-2); line-height: 1.7; margin-bottom: 6px; }
+  .section strong { color: var(--text); font-weight: 600; }
+  .callout {
+    background: var(--green-pale);
+    border-left: 3px solid var(--green);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 16px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.6;
+  }
+  /* FOOTER */
+  footer {
+    background: var(--dark);
+    color: rgba(255,255,255,0.55);
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  footer a { color: rgba(255,255,255,0.75); text-decoration: none; }
+  footer a:hover { color: white; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none">
+      <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="#1A3929"/>
+    </svg>
+    Memory
+  </a>
+  <a class="nav-back" href="index.html">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+    Back to App
+  </a>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">Legal Document</div>
+  <h1>Privacy Policy</h1>
+  <p>We built Memory on a foundation of transparency. This policy explains exactly what we collect, why we collect it, and how you stay in full control.</p>
+  <div class="hero-meta">Last updated: September 26, 2026 &nbsp;·&nbsp; Effective: September 26, 2026</div>
+</div>
+
+<div class="content">
+
+  <!-- Table of Contents -->
+  <div class="toc">
+    <div class="toc-title">Table of Contents</div>
+    <ol>
+      <li><a href="#who-we-are">Who we are</a></li>
+      <li><a href="#data-we-collect">Data we collect</a></li>
+      <li><a href="#how-we-use-data">How we use your data</a></li>
+      <li><a href="#data-storage">Data storage &amp; security</a></li>
+      <li><a href="#ai-processing">AI processing</a></li>
+      <li><a href="#your-rights">Your rights &amp; controls</a></li>
+      <li><a href="#data-sharing">Data sharing</a></li>
+      <li><a href="#retention">Data retention</a></li>
+      <li><a href="#children">Children's privacy</a></li>
+      <li><a href="#contact">Contact us</a></li>
+    </ol>
+  </div>
+
+  <div id="who-we-are" class="section">
+    <h2>1. Who We Are</h2>
+    <p>Memory is an AI memory application designed to make AI assistants more relevant and personal by remembering context about you — transparently and under your full control. We operate under the principle that <strong>your memories belong to you</strong>, not us.</p>
+    <p>References to "Memory", "we", "us", or "our" in this policy refer to the Memory application and its operators.</p>
+  </div>
+
+  <div id="data-we-collect" class="section">
+    <h2>2. Data We Collect</h2>
+    <p>We collect only what is necessary to provide the Memory service:</p>
+    <ul>
+      <li><strong>Account information:</strong> Email address and authentication credentials (handled via Supabase Auth with JWT tokens — your password is never stored in plain text).</li>
+      <li><strong>Memory content:</strong> Statements, preferences, and context that you explicitly choose to save or approve for storage.</li>
+      <li><strong>Usage metadata:</strong> When a memory was created, last used, how many times it was referenced in answers.</li>
+      <li><strong>Chat context:</strong> Conversation messages processed by the LLM API (Groq / Gemini) to detect possible memories. <strong>Chat messages are not permanently stored</strong> unless a memory is explicitly saved.</li>
+      <li><strong>Device information:</strong> OS version, app version, and crash logs — used only for debugging.</li>
+    </ul>
+    <div class="callout">
+      We do <strong>not</strong> collect browsing history, location data, contact lists, biometric data, financial information, or any data unrelated to the memory service.
+    </div>
+  </div>
+
+  <div id="how-we-use-data" class="section">
+    <h2>3. How We Use Your Data</h2>
+    <p>Your data is used exclusively to:</p>
+    <ul>
+      <li>Surface relevant memories when you interact with AI assistants</li>
+      <li>Show you your own memory activity in the Vault and Review Queue</li>
+      <li>Authenticate your account securely</li>
+      <li>Improve memory detection accuracy (anonymised, opt-in only)</li>
+      <li>Send you product-critical notifications (e.g. memory expiry warnings)</li>
+    </ul>
+    <p>We do <strong>not</strong> use your data for advertising, profiling, or sale to third parties.</p>
+  </div>
+
+  <div id="data-storage" class="section">
+    <h2>4. Data Storage &amp; Security</h2>
+    <p>Memory data is stored in a <strong>PostgreSQL database</strong> protected by Row Level Security (RLS). This means database-level enforcement ensures you can only ever access your own memories — not other users' data.</p>
+    <ul>
+      <li>All data is encrypted in transit (TLS 1.3) and at rest (AES-256)</li>
+      <li>Authentication uses JWT tokens with short expiry windows</li>
+      <li>Sensitive memory details are masked by default (configurable in Privacy Center)</li>
+      <li>API secrets are stored as environment variables and never embedded in client code</li>
+      <li>Semantic search uses <strong>pgVector</strong> — embeddings are stored securely in the same RLS-protected database</li>
+    </ul>
+  </div>
+
+  <div id="ai-processing" class="section">
+    <h2>5. AI Processing</h2>
+    <p>Memory uses large language model APIs (Groq API and Gemini API) to detect possible memories from your conversations. When you chat:</p>
+    <ul>
+      <li>Message content is sent to the LLM API over an encrypted connection</li>
+      <li>The API processes your message and returns a possible memory suggestion</li>
+      <li><strong>Nothing is saved until you explicitly approve it</strong></li>
+      <li>LLM providers process data according to their own privacy policies; we recommend reviewing Groq's and Google's policies</li>
+    </ul>
+    <div class="callout">
+      Sensitive details (health information, location, financial data) are auto-masked before being sent to AI APIs when you have that setting enabled.
+    </div>
+  </div>
+
+  <div id="your-rights" class="section">
+    <h2>6. Your Rights &amp; Controls</h2>
+    <p>You have full control over your data at all times:</p>
+    <ul>
+      <li><strong>View:</strong> All your memories are visible in the Memory Vault</li>
+      <li><strong>Edit:</strong> Modify any memory at any time</li>
+      <li><strong>Pause:</strong> Temporarily stop a memory from being used</li>
+      <li><strong>Delete:</strong> Remove any or all memories immediately and permanently</li>
+      <li><strong>Export:</strong> Download all your memories (coming soon)</li>
+      <li><strong>Retention control:</strong> Set per-room or per-memory expiry periods</li>
+    </ul>
+    <p>Residents of the EU/EEA have additional rights under GDPR including the right to erasure, portability, and restriction of processing. Contact us to exercise these rights.</p>
+  </div>
+
+  <div id="data-sharing" class="section">
+    <h2>7. Data Sharing</h2>
+    <p>We do not sell, rent, or trade your personal data. We share data only with:</p>
+    <ul>
+      <li><strong>LLM API providers</strong> (Groq, Google Gemini) — only chat context, only for memory detection, only over encrypted connections</li>
+      <li><strong>Supabase</strong> — authentication and database hosting</li>
+      <li><strong>Legal authorities</strong> — only when required by law and with proper legal process</li>
+    </ul>
+    <p>All third-party providers are contractually bound to handle your data only for the specific purpose of providing their service to us.</p>
+  </div>
+
+  <div id="retention" class="section">
+    <h2>8. Data Retention</h2>
+    <p>Memories are kept for the duration you set (default: 6 months). You can change retention per room or per individual memory in the Privacy Center. When a memory expires or you delete it, it is permanently removed from our database with no backups retained beyond 30 days.</p>
+    <p>Account data is retained for 30 days after account deletion to allow recovery, then permanently erased.</p>
+  </div>
+
+  <div id="children" class="section">
+    <h2>9. Children's Privacy</h2>
+    <p>Memory is not intended for use by children under 13 years of age. We do not knowingly collect personal data from children. If you believe a child has provided us with personal data, please contact us immediately and we will delete it.</p>
+  </div>
+
+  <div id="contact" class="section">
+    <h2>10. Contact Us</h2>
+    <p>For privacy questions, data requests, or to exercise your rights:</p>
+    <ul>
+      <li><strong>Email:</strong> privacy@memory.app</li>
+      <li><strong>Response time:</strong> Within 48 hours for all privacy requests</li>
+    </ul>
+    <p>Also see our <a href="terms.html" style="color:var(--green);font-weight:500;">Terms &amp; Conditions</a>.</p>
+  </div>
+
+</div>
+
+<footer>
+  <div style="margin-bottom:12px;">
+    <a href="index.html">App</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="terms.html">Terms &amp; Conditions</a>
+  </div>
+  <div>© 2026 Memory. Built on React Native · FastAPI · PostgreSQL · Supabase · pgVector</div>
+</footer>
+
+</body>
+</html>

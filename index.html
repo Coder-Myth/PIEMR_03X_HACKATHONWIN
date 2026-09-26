@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memory — AI memory, in the open.</title>
+<meta name="description" content="Memory gives you transparent, controllable AI memory. Know what's remembered, why it exists, and delete it anytime.">
+<link rel="icon" type="image/jpeg" href="favicon.jpg">
+<link rel="apple-touch-icon" href="favicon.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- SVG ICON DEFS -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path id="ic-sparkle"       d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/>
+    <path id="ic-chevron-left"  d="M15 18l-6-6 6-6"  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path id="ic-chevron-right" d="M9 18l6-6-6-6"    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path id="ic-chevron-down"  d="M6 9l6 6 6-6"     stroke-width="2" stroke-linecap="round"/>
+    <g id="ic-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke-width="2"/><polyline points="9,22 9,12 15,12 15,22" stroke-width="2"/></g>
+    <path id="ic-chat"    d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke-width="2"/>
+    <g id="ic-vault">    <rect x="3" y="11" width="18" height="11" rx="2" stroke-width="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4" stroke-width="2"/></g>
+    <path id="ic-shield"  d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2"/>
+    <g id="ic-briefcase"><rect x="2" y="7" width="20" height="14" rx="2" stroke-width="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" stroke-width="2"/></g>
+    <g id="ic-health"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="ic-user">     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke-width="2"/></g>
+    <path id="ic-check"   d="M8 12l3 3 5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <g id="ic-clock">    <circle cx="12" cy="12" r="9" stroke-width="2"/><path d="M12 7v5l3 3" stroke-width="2" stroke-linecap="round"/></g>
+    <g id="ic-calendar"> <rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="2"/></g>
+    <g id="ic-edit">     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke-width="2"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke-width="2"/></g>
+    <g id="ic-trash">    <polyline points="3,6 5,6 21,6" stroke-width="2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke-width="2"/><path d="M10 11v6M14 11v6" stroke-width="2"/></g>
+    <g id="ic-pause">    <rect x="6" y="4" width="4" height="16" rx="1" stroke-width="2"/><rect x="14" y="4" width="4" height="16" rx="1" stroke-width="2"/></g>
+    <g id="ic-play">     <polygon points="5,3 19,12 5,21" stroke-width="2" stroke-linejoin="round"/></g>
+    <g id="ic-filter">   <line x1="4" y1="6" x2="20" y2="6" stroke-width="2"/><line x1="8" y1="12" x2="16" y2="12" stroke-width="2"/><line x1="12" y1="18" x2="12" y2="18" stroke-width="2" stroke-linecap="round"/></g>
+    <path id="ic-send"    d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <g id="ic-plus">     <line x1="12" y1="5" x2="12" y2="19" stroke-width="2" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke-width="2" stroke-linecap="round"/></g>
+    <path id="ic-x"       d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/>
+    <g id="ic-download"> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2"/><polyline points="7,10 12,15 17,10" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke-width="2"/></g>
+    <g id="ic-wifi">     <path d="M1 6s4.5-5 11-5 11 5 11 5" stroke-width="2" stroke-linecap="round"/><path d="M5 10s3-3.5 7-3.5 7 3.5 7 3.5" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="15" r="2" fill="currentColor"/></g>
+    <g id="ic-mail">     <rect x="2" y="4" width="20" height="16" rx="2" stroke-width="2"/><polyline points="2,4 12,13 22,4" stroke-width="2"/></g>
+    <g id="ic-lock">     <rect x="3" y="11" width="18" height="11" rx="2" stroke-width="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4" stroke-width="2"/></g>
+    <g id="ic-eye">      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke-width="2"/></g>
+    <g id="ic-eye-off">  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" stroke-width="2" stroke-linecap="round"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="1" x2="23" y2="23" stroke-width="2" stroke-linecap="round"/></g>
+    <g id="ic-settings"> <circle cx="12" cy="12" r="3" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke-width="2"/></g>
+    <g id="ic-logout">   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-width="2" stroke-linecap="round"/><polyline points="16,17 21,12 16,7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="21" y1="12" x2="9" y2="12" stroke-width="2" stroke-linecap="round"/></g>
+    <g id="ic-admin">    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="ic-database"> <ellipse cx="12" cy="5" rx="9" ry="3" stroke-width="2"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" stroke-width="2"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" stroke-width="2"/></g>
+    <g id="ic-key">      <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="ic-add-mem">  <circle cx="12" cy="12" r="10" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="16" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="12" x2="16" y2="12" stroke-width="2" stroke-linecap="round"/></g>
+  </defs>
+</svg>
+
+<div class="phone">
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><use href="#ic-wifi"/></svg>
+      <svg viewBox="0 0 24 24" fill="currentColor"><rect x="1" y="6" width="3" height="12" rx="1"/><rect x="6" y="4" width="3" height="14" rx="1"/><rect x="11" y="2" width="3" height="16" rx="1"/><rect x="16" y="1" width="5" height="17" rx="1" opacity="0.3"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="7" width="18" height="11" rx="2" stroke-width="1.8"/><path d="M21 11v3" stroke-width="1.8" stroke-linecap="round"/><rect x="4" y="9" width="12" height="7" rx="1" fill="currentColor" stroke="none"/></svg>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 0 — SPLASH                           -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen active" id="screen-splash" style="background:transparent;position:relative;">
+    <div style="flex:1;position:relative;overflow:hidden;">
+      <img src="splash_bg.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,30,20,0.3) 0%,rgba(10,30,20,0.15) 40%,rgba(10,30,20,0.6) 100%);"></div>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);text-align:center;width:100%;">
+        <div style="width:80px;height:80px;border-radius:22px;background:rgba(255,255,255,0.15);backdrop-filter:blur(16px);border:1.5px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none"><use href="#ic-sparkle" fill="white"/></svg>
+        </div>
+        <div style="font-size:36px;font-weight:700;color:white;text-shadow:0 2px 20px rgba(0,0,0,0.5);margin-bottom:10px;letter-spacing:-0.5px;">Memory</div>
+        <div style="font-size:16px;color:rgba(255,255,255,0.88);text-shadow:0 1px 10px rgba(0,0,0,0.4);margin-bottom:40px;">Better answers. Your way.</div>
+      </div>
+      <div style="position:absolute;bottom:48px;left:0;right:0;padding:0 32px;text-align:center;">
+        <button onclick="showScreen('screen-login')" style="width:100%;padding:16px;background:white;color:var(--dark);border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 24px rgba(0,0,0,0.25);">
+          Get Started
+        </button>
+        <div style="margin-top:14px;font-size:13px;color:rgba(255,255,255,0.6);">Sign in if you already have an account</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN LOGIN — AUTHENTICATION               -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen-login" style="background:var(--cream);">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 28px;">
+      <div style="text-align:center;margin-bottom:36px;">
+        <div style="width:60px;height:60px;border-radius:16px;background:var(--dark);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><use href="#ic-sparkle" fill="white"/></svg>
+        </div>
+        <div style="font-size:24px;font-weight:700;color:var(--dark);">Welcome back</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:6px;">Sign in to your Memory account</div>
+      </div>
+
+      <!-- Error banner -->
+      <div id="auth-error" style="display:none;background:var(--red-pale);border:1px solid rgba(229,57,53,0.2);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--red);align-items:center;gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16" stroke-linecap="round"/></svg>
+        <span id="auth-error-msg">Invalid email or password.</span>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label">Email address</label>
+        <div class="auth-input-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-mail"/></svg>
+          <input id="login-email" type="email" class="auth-input" placeholder="your@email.com" autocomplete="email">
+        </div>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label">Password</label>
+        <div class="auth-input-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-lock"/></svg>
+          <input id="login-password" type="password" class="auth-input" placeholder="Enter your password" autocomplete="current-password">
+          <button onclick="togglePassword()" id="pw-toggle" style="background:none;border:none;cursor:pointer;padding:0;color:var(--text-muted);" title="Show/hide password">
+            <svg id="pw-eye" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#ic-eye"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div style="text-align:right;margin-bottom:24px;">
+        <span style="font-size:13px;color:var(--green);font-weight:500;cursor:pointer;">Forgot password?</span>
+      </div>
+
+      <button onclick="handleLogin()" id="login-btn" style="width:100%;padding:16px;background:var(--dark);color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;">
+        Sign in
+      </button>
+
+      <div style="margin-top:20px;padding:12px 14px;background:var(--green-pale);border-radius:10px;display:flex;align-items:flex-start;gap:8px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><use href="#ic-key"/></svg>
+        <div style="font-size:11px;color:var(--green);line-height:1.5;">Auth via <strong>JWT + Supabase Auth</strong>. Credentials secured with PostgreSQL RLS.</div>
+      </div>
+    </div>
+    <div style="padding:0 28px 32px;text-align:center;">
+      <span onclick="showScreen('screen-splash')" style="font-size:13px;color:var(--text-muted);cursor:pointer;">← Back</span>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 1 — HOME / OVERVIEW                 -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen-home">
+    <div class="screen-scroll">
+      <!-- App Header -->
+      <div style="padding:4px 20px 0;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><use href="#ic-sparkle" fill="#1A3929" stroke="#1A3929" stroke-width="0.5"/></svg>
+          <div>
+            <div style="font-size:17px;font-weight:700;color:var(--dark);">Memory</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:-1px;">AI memory, in the open.</div>
+          </div>
+        </div>
+        <div onclick="showScreen('screen-profile')" style="width:36px;height:36px;border-radius:10px;background:var(--dark);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+          <span id="home-avatar" style="font-size:13px;font-weight:700;color:white;letter-spacing:-0.5px;">?</span>
+        </div>
+      </div>
+
+      <!-- Hero greeting -->
+      <div style="padding:16px 20px 12px;position:relative;overflow:hidden;min-height:110px;">
+        <div style="font-size:24px;font-weight:700;color:var(--dark);line-height:1.2;">
+          <span id="home-greeting">Good day,</span><br><span id="home-username">—</span>
+        </div>
+        <div style="font-size:13px;color:var(--text-2);margin-top:8px;line-height:1.5;max-width:220px;" id="home-subtitle">Your memories help me give you more relevant responses.</div>
+        <div style="position:absolute;right:-18px;top:-18px;width:150px;height:130px;overflow:hidden;pointer-events:none;">
+          <img src="home_botanical.jpg" alt="" style="width:100%;height:100%;object-fit:cover;opacity:0.38;mix-blend-mode:multiply;border-radius:12px;">
+        </div>
+      </div>
+
+      <!-- Stats grid — all values rendered by JS -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-icon-row"><div class="stat-dot" style="background:var(--green-dot);"></div><span style="font-size:11px;color:var(--text-muted);">Total memories</span></div>
+          <div class="stat-num" id="stat-total">0</div>
+          <div style="font-size:11px;color:var(--text-muted);" id="stat-limit-label">0 / 10 used</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon-row"><div class="stat-dot" style="background:var(--amber-dot);"></div><span style="font-size:11px;color:var(--text-muted);">Pending review</span></div>
+          <div class="stat-num" id="stat-pending">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon-row"><div class="stat-dot" style="background:var(--green-dot);"></div><span style="font-size:11px;color:var(--text-muted);">Active</span></div>
+          <div class="stat-num" id="stat-active">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon-row"><div class="stat-dot" style="background:#B0AA9E;"></div><span style="font-size:11px;color:var(--text-muted);">Paused</span></div>
+          <div class="stat-num" id="stat-paused">0</div>
+        </div>
+      </div>
+
+      <!-- Recent Activity — rendered by JS -->
+      <div style="padding:20px 20px 0;">
+        <div class="section-label">Recent activity</div>
+        <div class="card" style="padding:4px 16px;min-height:60px;" id="home-activity-list">
+          <!-- filled by renderActivity() -->
+        </div>
+      </div>
+
+      <!-- CTA banner -->
+      <div style="margin:16px 20px 20px;background:var(--dark);border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="showScreen('screen-chat')">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><use href="#ic-sparkle" fill="#4CAF7D"/></svg>
+            <span style="font-size:13px;font-weight:600;color:white;">Add a memory via chat</span>
+          </div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.65);">Tell the AI something about yourself</div>
+        </div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><use href="#ic-chevron-right"/></svg>
+      </div>
+    </div>
+    <nav class="bottom-nav">
+      <div class="nav-item active" onclick="showScreen('screen-home')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><use href="#ic-home"/></svg><span>Home</span></div>
+      <div class="nav-item" onclick="showScreen('screen-chat')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-chat"/></svg><span>Chat</span></div>
+      <div class="nav-item" onclick="showScreen('screen-vault')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-vault"/></svg><span>Vault</span></div>
+      <div class="nav-item" onclick="showScreen('screen-privacy')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-shield"/></svg><span>Privacy</span></div>
+    </nav>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 2 — CHAT / ADD MEMORY               -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen-chat" style="background:var(--panel);">
+    <div class="back-header">
+      <button class="back-btn" onclick="showScreen('screen-home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#ic-chevron-left"/></svg>Chat
+      </button>
+      <div class="room-chip" onclick="showScreen('screen-rooms')">
+        <div class="dot"></div> <span id="chat-room-label">Work Room</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><use href="#ic-chevron-down"/></svg>
+      </div>
+    </div>
+    <div class="active-indicator"><div class="dot"></div> Active</div>
+
+    <!-- Chat messages list -->
+    <div class="screen-scroll" id="chat-messages-wrap">
+      <div class="chat-wrap" id="chat-messages">
+        <!-- filled by renderChat() -->
+      </div>
+    </div>
+
+    <!-- Memory limit banner -->
+    <div id="chat-limit-banner" style="display:none;padding:8px 16px;background:var(--red-pale);border-top:1px solid rgba(229,57,53,0.2);">
+      <div style="font-size:12px;color:var(--red);font-weight:500;text-align:center;">Memory limit reached (10/10). Delete a memory to add more.</div>
+    </div>
+
+    <!-- Draft card — shown when a suggestion is available -->
+    <div id="chat-draft-wrap" style="display:none;">
+      <div class="draft-card">
+        <div class="draft-card-header"><div class="dot"></div> Possible memory · Not saved</div>
+        <div class="draft-text" id="chat-draft-text">—</div>
+        <div class="draft-selectors">
+          <div class="draft-selector-group">
+            <div class="draft-selector-label">Context room</div>
+            <select id="draft-room" class="draft-selector" style="border:none;background:var(--panel);border-radius:var(--radius-sm);font-size:13px;font-weight:500;color:var(--text);cursor:pointer;width:100%;padding:7px 10px;">
+              <!-- options filled by renderDraftRoomOptions() -->
+            </select>
+          </div>
+          <div class="draft-selector-group">
+            <div class="draft-selector-label">Keep for</div>
+            <select id="draft-retention" class="draft-selector" style="border:none;background:var(--panel);border-radius:var(--radius-sm);font-size:13px;font-weight:500;color:var(--text);cursor:pointer;width:100%;padding:7px 10px;">
+              <option value="1 month">1 month</option>
+              <option value="3 months">3 months</option>
+              <option value="6 months" selected>6 months</option>
+              <option value="1 year">1 year</option>
+              <option value="Forever">Forever</option>
+            </select>
+          </div>
+        </div>
+        <div class="draft-actions">
+          <button class="btn btn-outline" style="flex:0.8;" onclick="dismissDraft()">Reject</button>
+          <button class="btn btn-primary" onclick="keepDraftMemory()">Keep memory</button>
+        </div>
+        <div class="note-line" style="padding:0 14px 10px;"><span>•</span><span>This will help me give you more relevant answers.</span></div>
+      </div>
+    </div>
+
+    <!-- Composer -->
+    <div class="composer">
+      <div class="composer-plus" onclick="showAddMemoryForm()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-plus"/></svg>
+      </div>
+      <input type="text" id="chat-input" class="composer-input" placeholder="Tell me something about yourself..." style="border:none;outline:none;font-family:'Inter',sans-serif;">
+      <button class="composer-send" onclick="sendChatMessage()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><use href="#ic-send"/></svg>
+      </button>
+    </div>
+    <nav class="bottom-nav">
+      <div class="nav-item" onclick="showScreen('screen-home')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-home"/></svg><span>Home</span></div>
+      <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><use href="#ic-chat"/></svg><span>Chat</span></div>
+      <div class="nav-item" onclick="showScreen('screen-vault')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-vault"/></svg><span>Vault</span></div>
+      <div class="nav-item" onclick="showScreen('screen-privacy')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-shield"/></svg><span>Privacy</span></div>
+    </nav>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 3 — REVIEW QUEUE                    -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen-queue" style="background:var(--cream);">
+    <div class="back-header">
+      <button class="back-btn" onclick="showScreen('screen-home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#ic-chevron-left"/></svg>Review Queue
+      </button>
+      <span id="queue-count-badge" style="font-size:12px;font-weight:600;background:var(--amber-pale);color:var(--amber);padding:4px 10px;border-radius:6px;">0 pending</span>
+    </div>
+    <div class="screen-scroll">
+      <div id="queue-list" style="padding:0 20px;">
+        <!-- filled by renderQueue() -->
+      </div>
+    </div>
+    <nav class="bottom-nav">
+      <div class="nav-item active" onclick="showScreen('screen-home')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><use href="#ic-home"/></svg><span>Home</span></div>
+      <div class="nav-item" onclick="showScreen('screen-chat')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-chat"/></svg><span>Chat</span></div>
+      <div class="nav-item" onclick="showScreen('screen-vault')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-vault"/></svg><span>Vault</span></div>
+      <div class="nav-item" onclick="showScreen('screen-privacy')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-shield"/></svg><span>Privacy</span></div>
+    </nav>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 4 — MEMORY VAULT                    -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen-vault" style="background:var(--cream);">
+    <div class="back-header">
+      <button class="back-btn" onclick="showScreen('screen-home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#ic-chevron-left"/></svg>Memory Vault
+      </button>
+      <span id="vault-count-badge" style="font-size:12px;font-weight:600;background:var(--panel);color:var(--text-muted);padding:4px 10px;border-radius:6px;">0 / 10</span>
+    </div>
+
+    <!-- Search -->
+    <div style="padding:0 20px 10px;">
+      <div style="display:flex;align-items:center;gap:10px;background:var(--white);border-radius:10px;padding:10px 14px;border:1px solid var(--border);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" stroke-linecap="round"/></svg>
+        <input type="text" id="vault-search" placeholder="Search memories..." oninput="renderVault()" style="flex:1;border:none;background:none;font-size:14px;color:var(--text);font-family:'Inter',sans-serif;outline:none;">
+      </div>
+    </div>
+
+    <!-- Filter tabs — rendered dynamically from rooms -->
+    <div class="filter-tabs" id="vault-filter-tabs">
+      <!-- filled by renderVaultTabs() -->
+    </div>
+
+    <div class="screen-scroll">
+      <div id="vault-list" style="padding:0 20px;">
+        <!-- filled by renderVault() -->
+      </div>
+
+      <!-- Add memory shortcut -->
+      <div style="padding:0 20px 20px;">
+        <button onclick="showScreen('screen-chat')" id="vault-add-btn" style="width:100%;padding:13px;border:2px dashed var(--border);background:transparent;border-radius:12px;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-plus"/></svg>
+          Add a memory via Chat
+        </button>
+      </div>
+    </div>
+    <nav class="bottom-nav">
+      <div class="nav-item" onclick="showScreen('screen-home')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-home"/></svg><span>Home</span></div>
+      <div class="nav-item" onclick="showScreen('screen-chat')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-chat"/></svg><span>Chat</span></div>
+      <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><use href="#ic-vault"/></svg><span>Vault</span></div>
+      <div class="nav-item" onclick="showScreen('screen-privacy')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-shield"/></svg><span>Privacy</span></div>
+    </nav>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 5 — MEMORY DETAIL (BOTTOM SHEET)    -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen-detail" style="background:rgba(0,0,0,0.4);position:relative;">
+    <div style="flex:1;cursor:pointer;" onclick="showScreen('screen-vault')"></div>
+    <div style="background:var(--white);border-radius:24px 24px 0 0;max-height:88%;">
+      <div style="display:flex;justify-content:center;padding:12px 0 4px;"><div style="width:36px;height:4px;border-radius:2px;background:var(--border);"></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 12px;">
+        <span id="detail-status-badge" class="badge green">Active</span>
+        <button onclick="showScreen('screen-vault')" style="background:none;border:none;cursor:pointer;color:var(--text-muted);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#ic-x"/></svg></button>
+      </div>
+      <div style="overflow-y:auto;max-height:calc(88% - 100px);padding-bottom:20px;">
+        <div style="padding:0 20px 16px;border-bottom:1px solid var(--border);">
+          <div id="detail-text" style="font-size:20px;font-weight:700;color:var(--dark);line-height:1.3;">—</div>
+        </div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--border);">
+          <div class="detail-label">Room</div>
+          <div id="detail-room" style="font-size:14px;font-weight:600;color:var(--text);margin-top:4px;">—</div>
+        </div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--border);">
+          <div class="detail-label">Retention</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-clock"/></svg>
+            <span id="detail-retention" style="font-size:14px;font-weight:600;color:var(--text);">—</span>
+          </div>
+        </div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--border);">
+          <div class="detail-label">Created</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-calendar"/></svg>
+            <span id="detail-created" style="font-size:13px;color:var(--text-muted);">—</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;padding:14px 20px;border-bottom:1px solid var(--border);gap:10px;">
+          <div id="detail-pause-btn" onclick="toggleDetailMemoryPause()" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px;border-radius:10px;background:var(--panel);cursor:pointer;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="2" id="detail-pause-icon"><use href="#ic-pause"/></svg>
+            <span id="detail-pause-label" style="font-size:12px;font-weight:600;color:var(--text-2);">Pause</span>
+          </div>
+          <div onclick="editDetailMemory()" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px;border-radius:10px;background:var(--panel);cursor:pointer;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="2"><use href="#ic-edit"/></svg>
+            <span style="font-size:12px;font-weight:600;color:var(--text-2);">Edit text</span>
+          </div>
+        </div>
+        <div style="padding:14px 20px;">
+          <button onclick="deleteDetailMemory()" class="btn btn-danger" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><use href="#ic-trash"/></svg>Delete this memory
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 6 — CONTEXT ROOMS                   -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen-rooms" style="background:var(--cream);">
+    <div class="back-header">
+      <button class="back-btn" onclick="showScreen('screen-home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#ic-chevron-left"/></svg>Context Rooms
+      </button>
+    </div>
+    <div class="screen-scroll">
+      <!-- Dynamic room list -->
+      <div id="rooms-list">
+        <!-- filled by renderRooms() -->
+      </div>
+
+      <!-- Create new room form -->
+      <div style="margin:4px 20px 16px;">
+        <div id="create-room-toggle" onclick="toggleCreateRoomForm()" style="width:100%;padding:13px;border:2px dashed var(--border);background:transparent;border-radius:12px;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-plus"/></svg>
+          Create a new room
+        </div>
+        <div id="create-room-form" style="display:none;background:var(--white);border-radius:14px;box-shadow:var(--shadow);padding:16px;margin-top:8px;">
+          <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">New context room</div>
+          <div class="auth-field" style="margin-bottom:10px;">
+            <label class="auth-label">Room name</label>
+            <div class="auth-input-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-edit"/></svg>
+              <input id="new-room-name" type="text" class="auth-input" placeholder="e.g. Finance, Travel, Study..." maxlength="20">
+            </div>
+          </div>
+          <div class="auth-field" style="margin-bottom:10px;">
+            <label class="auth-label">Description</label>
+            <div class="auth-input-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-chat"/></svg>
+              <input id="new-room-desc" type="text" class="auth-input" placeholder="What is this room for?" maxlength="80">
+            </div>
+          </div>
+          <div class="auth-field" style="margin-bottom:14px;">
+            <label class="auth-label">Color theme</label>
+            <select id="new-room-color" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-md);background:var(--white);font-size:13px;font-weight:500;color:var(--text);font-family:'Inter',sans-serif;cursor:pointer;">
+              <option value="green">Green</option>
+              <option value="teal">Teal</option>
+              <option value="blue">Blue</option>
+              <option value="amber">Amber</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="toggleCreateRoomForm()" class="btn btn-outline" style="padding:10px;">Cancel</button>
+            <button onclick="createRoom()" class="btn btn-primary" style="padding:10px;">Create room</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Room limit note -->
+      <div id="rooms-limit-note" style="display:none;padding:0 20px 16px;text-align:center;font-size:12px;color:var(--text-muted);">Maximum 6 rooms. Delete a custom room to create a new one.</div>
+    </div>
+    <nav class="bottom-nav">
+      <div class="nav-item active" onclick="showScreen('screen-home')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><use href="#ic-home"/></svg><span>Home</span></div>
+      <div class="nav-item" onclick="showScreen('screen-chat')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-chat"/></svg><span>Chat</span></div>
+      <div class="nav-item" onclick="showScreen('screen-vault')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-vault"/></svg><span>Vault</span></div>
+      <div class="nav-item" onclick="showScreen('screen-privacy')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-shield"/></svg><span>Privacy</span></div>
+    </nav>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 7 — PRIVACY CENTER                  -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen-privacy" style="background:var(--cream);">
+    <div class="back-header">
+      <button class="back-btn" onclick="showScreen('screen-home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#ic-chevron-left"/></svg>Privacy Center
+      </button>
+    </div>
+    <div class="screen-scroll">
+      <div style="padding:0 20px 16px;">
+        <div style="font-size:22px;font-weight:700;color:var(--dark);margin-bottom:6px;">Your privacy, your control</div>
+        <div style="font-size:13px;color:var(--text-2);line-height:1.5;">You're in control of what gets remembered, how long it lasts, and how it's used.</div>
+      </div>
+      <div style="margin:0 20px;background:var(--white);border-radius:16px;box-shadow:var(--shadow);padding:4px 16px 0;">
+        <div style="padding:12px 0;border-bottom:1px solid var(--border);"><div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Memory controls</div></div>
+        <div class="privacy-row"><div class="privacy-row-text"><div class="privacy-row-label">Show memory suggestions</div><div class="privacy-row-sub">Get suggestions before they're saved.</div></div><div class="toggle"></div></div>
+        <div class="privacy-row"><div class="privacy-row-text"><div class="privacy-row-label">Auto-mask sensitive details</div><div class="privacy-row-sub">Automatically detect and mask sensitive info.</div></div><div class="toggle"></div></div>
+        <div class="privacy-row"><div class="privacy-row-text"><div class="privacy-row-label">Ask before saving masked memory</div><div class="privacy-row-sub">Get your approval for masked content.</div></div><div class="toggle"></div></div>
+        <div class="privacy-row" style="border-bottom:none;"><div class="privacy-row-text"><div class="privacy-row-label">Default retention period</div><div class="privacy-row-sub">How long to keep memories by default.</div></div>
+          <div style="display:flex;align-items:center;gap:6px;background:var(--panel);border-radius:8px;padding:6px 10px;cursor:pointer;"><span style="font-size:13px;font-weight:600;color:var(--text);">6 months</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#ic-chevron-down"/></svg></div>
+        </div>
+      </div>
+      <div style="padding:20px 20px 8px;">
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;">Recent control activity</div>
+        <div style="background:var(--white);border-radius:14px;padding:4px 16px;box-shadow:var(--shadow);" id="privacy-activity-list"></div>
+      </div>
+      <div style="padding:4px 20px 8px;">
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;">Legal</div>
+        <div style="background:var(--white);border-radius:14px;padding:4px 16px;box-shadow:var(--shadow);">
+          <a href="privacy.html" style="text-decoration:none;"><div class="activity-item" style="cursor:pointer;"><div class="act-dot" style="background:var(--green-pale);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><use href="#ic-shield"/></svg></div><div class="act-body"><div class="act-label" style="color:var(--text);">Privacy Policy</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-chevron-right"/></svg></div></a>
+          <a href="terms.html" style="text-decoration:none;"><div class="activity-item" style="border-bottom:none;cursor:pointer;"><div class="act-dot" style="background:var(--panel);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-edit"/></svg></div><div class="act-body"><div class="act-label" style="color:var(--text);">Terms &amp; Conditions</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-chevron-right"/></svg></div></a>
+        </div>
+      </div>
+      <div style="height:16px;"></div>
+    </div>
+    <nav class="bottom-nav">
+      <div class="nav-item" onclick="showScreen('screen-home')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-home"/></svg><span>Home</span></div>
+      <div class="nav-item" onclick="showScreen('screen-chat')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-chat"/></svg><span>Chat</span></div>
+      <div class="nav-item" onclick="showScreen('screen-vault')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-vault"/></svg><span>Vault</span></div>
+      <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><use href="#ic-shield"/></svg><span>Privacy</span></div>
+    </nav>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 8 — USER PROFILE                    -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen-profile" style="background:var(--cream);">
+    <div class="back-header">
+      <button class="back-btn" onclick="showScreen('screen-home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#ic-chevron-left"/></svg>Profile
+      </button>
+      <div onclick="showScreen('screen-admin')" style="display:flex;align-items:center;gap:5px;background:var(--dark);color:white;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12px;font-weight:600;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><use href="#ic-admin"/></svg>Admin
+      </div>
+    </div>
+    <div class="screen-scroll">
+      <!-- Profile card -->
+      <div style="padding:0 20px 16px;">
+        <div style="background:var(--dark);border-radius:20px;padding:28px 24px;text-align:center;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;right:0;width:100px;height:100px;background:rgba(255,255,255,0.04);border-radius:50%;transform:translate(30px,-30px);"></div>
+          <div style="width:72px;height:72px;border-radius:18px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:2px solid rgba(255,255,255,0.2);">
+            <span id="profile-avatar" style="font-size:26px;font-weight:700;color:white;letter-spacing:-1px;">?</span>
+          </div>
+          <div id="profile-name" style="font-size:20px;font-weight:700;color:white;margin-bottom:4px;">—</div>
+          <div id="profile-email" style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:16px;">—</div>
+          <div style="display:flex;justify-content:center;gap:10px;">
+            <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:6px 14px;font-size:12px;color:rgba(255,255,255,0.8);">
+              <div id="profile-stat-memories" style="font-size:18px;font-weight:700;color:white;">0</div>
+              <div>Memories</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:6px 14px;font-size:12px;color:rgba(255,255,255,0.8);">
+              <div style="font-size:18px;font-weight:700;color:white;">3</div>
+              <div>Rooms</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:6px 14px;font-size:12px;color:rgba(255,255,255,0.8);">
+              <div id="profile-stat-joined" style="font-size:18px;font-weight:700;color:white;">—</div>
+              <div>Joined</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:0 20px 12px;">
+        <div class="section-label">Account details</div>
+        <div style="background:var(--white);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;">
+          <div class="profile-row"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-user"/></svg><div class="profile-row-body"><div class="profile-row-label">Name</div><div class="profile-row-value" id="profile-row-name">—</div></div></div>
+          <div class="profile-row"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-mail"/></svg><div class="profile-row-body"><div class="profile-row-label">Email</div><div class="profile-row-value" id="profile-row-email" style="font-size:11px;word-break:break-all;">—</div></div></div>
+          <div class="profile-row" style="border-bottom:none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-calendar"/></svg><div class="profile-row-body"><div class="profile-row-label">Member since</div><div class="profile-row-value" id="profile-row-joined">—</div></div></div>
+        </div>
+      </div>
+
+      <div style="padding:0 20px 12px;">
+        <div class="section-label">App</div>
+        <div style="background:var(--white);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;">
+          <div class="profile-row" style="cursor:pointer;" onclick="showScreen('screen-privacy')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-shield"/></svg><div class="profile-row-body"><div class="profile-row-label">Privacy Center</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-chevron-right"/></svg></div>
+          <div class="profile-row" style="cursor:pointer;" onclick="showScreen('screen-rooms')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-settings"/></svg><div class="profile-row-body"><div class="profile-row-label">Context Rooms</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-chevron-right"/></svg></div>
+          <div class="profile-row" style="border-bottom:none;cursor:pointer;" onclick="handleLogout()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><use href="#ic-logout"/></svg><div class="profile-row-body"><div class="profile-row-label" style="color:var(--red);">Sign out</div></div></div>
+        </div>
+      </div>
+      <div style="height:16px;"></div>
+    </div>
+    <nav class="bottom-nav">
+      <div class="nav-item" onclick="showScreen('screen-home')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-home"/></svg><span>Home</span></div>
+      <div class="nav-item" onclick="showScreen('screen-chat')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-chat"/></svg><span>Chat</span></div>
+      <div class="nav-item" onclick="showScreen('screen-vault')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-vault"/></svg><span>Vault</span></div>
+      <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><use href="#ic-user"/></svg><span>Profile</span></div>
+    </nav>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 9 — ADMIN PANEL                     -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen-admin" style="background:var(--cream);">
+    <div class="back-header">
+      <button class="back-btn" onclick="showScreen('screen-profile')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#ic-chevron-left"/></svg>Admin Panel
+      </button>
+      <div style="background:var(--red-pale);color:var(--red);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;">Restricted</div>
+    </div>
+    <div class="screen-scroll">
+      <!-- Admin ID banner -->
+      <div style="margin:0 20px 16px;background:var(--dark);border-radius:16px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2"><use href="#ic-admin"/></svg></div>
+          <div><div style="font-size:14px;font-weight:700;color:white;">Admin Access</div><div id="admin-user-label" style="font-size:11px;color:rgba(255,255,255,0.55);">— · Owner</div></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="background:rgba(255,255,255,0.1);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.8);">Full access</span>
+          <span style="background:rgba(76,175,125,0.2);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;color:#4CAF7D;">RLS Verified</span>
+          <span style="background:rgba(232,137,43,0.2);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--amber);">JWT Active</span>
+        </div>
+      </div>
+
+      <!-- Tech stack -->
+      <div style="padding:0 20px 12px;">
+        <div class="section-label">Tech Stack</div>
+        <div style="background:var(--white);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;">
+          <div class="admin-row"><div class="admin-row-key">Frontend</div><div class="admin-row-val">React Native + Expo</div></div>
+          <div class="admin-row"><div class="admin-row-key">Navigation</div><div class="admin-row-val">Expo Router</div></div>
+          <div class="admin-row"><div class="admin-row-key">Backend</div><div class="admin-row-val">FastAPI / Flask</div></div>
+          <div class="admin-row"><div class="admin-row-key">Database</div><div class="admin-row-val">PostgreSQL + pgVector</div></div>
+          <div class="admin-row"><div class="admin-row-key">Auth</div><div class="admin-row-val">JWT + Supabase Auth</div></div>
+          <div class="admin-row"><div class="admin-row-key">LLM APIs</div><div class="admin-row-val">Groq + Gemini</div></div>
+          <div class="admin-row" style="border-bottom:none;"><div class="admin-row-key">Security</div><div class="admin-row-val">PostgreSQL RLS</div></div>
+        </div>
+      </div>
+
+      <!-- Live data -->
+      <div style="padding:0 20px 12px;">
+        <div class="section-label">Live data</div>
+        <div style="background:var(--white);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;">
+          <div class="admin-row"><div class="admin-row-key">User email</div><div id="admin-email" class="admin-row-val" style="font-size:11px;word-break:break-all;">—</div></div>
+          <div class="admin-row"><div class="admin-row-key">User ID</div><div id="admin-uid" style="font-family:monospace;font-size:11px;color:var(--text-muted);background:var(--panel);padding:3px 8px;border-radius:6px;">—</div></div>
+          <div class="admin-row"><div class="admin-row-key">Total memories</div><div id="admin-mem-total" class="admin-row-val">0</div></div>
+          <div class="admin-row"><div class="admin-row-key">Memory slots</div><div id="admin-mem-slots" class="admin-row-val">0 / 10 used</div></div>
+          <div class="admin-row"><div class="admin-row-key">Active</div><div id="admin-mem-active" class="admin-row-val">0</div></div>
+          <div class="admin-row"><div class="admin-row-key">Paused</div><div id="admin-mem-paused" class="admin-row-val">0</div></div>
+          <div class="admin-row" style="border-bottom:none;"><div class="admin-row-key">Last action</div><div id="admin-last-action" class="admin-row-val">None</div></div>
+        </div>
+      </div>
+
+      <!-- Memory list in admin -->
+      <div style="padding:0 20px 12px;">
+        <div class="section-label">All memories (admin view)</div>
+        <div id="admin-memory-list" style="background:var(--white);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Danger zone -->
+      <div style="padding:0 20px 24px;">
+        <div class="section-label" style="color:var(--red);">Danger zone</div>
+        <div style="background:var(--white);border-radius:14px;box-shadow:var(--shadow);padding:16px;border:1px solid var(--red-pale);">
+          <div style="font-size:13px;color:var(--text-2);margin-bottom:14px;line-height:1.5;">These actions are irreversible. Proceed with caution.</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <button onclick="deleteAllMemories()" class="btn btn-outline" style="width:100%;padding:11px;font-size:13px;">Delete all memories</button>
+            <button onclick="handleLogout()" class="btn btn-danger" style="width:100%;padding:11px;font-size:13px;">Sign out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="bottom-nav">
+      <div class="nav-item" onclick="showScreen('screen-home')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-home"/></svg><span>Home</span></div>
+      <div class="nav-item" onclick="showScreen('screen-chat')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-chat"/></svg><span>Chat</span></div>
+      <div class="nav-item" onclick="showScreen('screen-vault')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-vault"/></svg><span>Vault</span></div>
+      <div class="nav-item" onclick="showScreen('screen-profile')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-user"/></svg><span>Profile</span></div>
+    </nav>
+  </div>
+
+</div><!-- /phone -->
+
+<!-- SCREEN SWITCHER DOTS -->
+<div style="position:fixed;bottom:32px;left:50%;transform:translateX(-50%);z-index:100;">
+  <div style="display:flex;gap:6px;background:rgba(0,0,0,0.55);backdrop-filter:blur(10px);border-radius:10px;padding:8px 12px;">
+    <div class="dot-btn active" data-screen="screen-splash"  onclick="showScreen('screen-splash')"  title="Splash"></div>
+    <div class="dot-btn"        data-screen="screen-login"   onclick="showScreen('screen-login')"   title="Login"></div>
+    <div class="dot-btn"        data-screen="screen-home"    onclick="showScreen('screen-home')"    title="Home"></div>
+    <div class="dot-btn"        data-screen="screen-chat"    onclick="showScreen('screen-chat')"    title="Chat"></div>
+    <div class="dot-btn"        data-screen="screen-queue"   onclick="showScreen('screen-queue')"   title="Queue"></div>
+    <div class="dot-btn"        data-screen="screen-vault"   onclick="showScreen('screen-vault')"   title="Vault"></div>
+    <div class="dot-btn"        data-screen="screen-detail"  onclick="showScreen('screen-detail')"  title="Detail"></div>
+    <div class="dot-btn"        data-screen="screen-rooms"   onclick="showScreen('screen-rooms')"   title="Rooms"></div>
+    <div class="dot-btn"        data-screen="screen-privacy" onclick="showScreen('screen-privacy')" title="Privacy"></div>
+    <div class="dot-btn"        data-screen="screen-profile" onclick="showScreen('screen-profile')" title="Profile"></div>
+    <div class="dot-btn"        data-screen="screen-admin"   onclick="showScreen('screen-admin')"   title="Admin"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
