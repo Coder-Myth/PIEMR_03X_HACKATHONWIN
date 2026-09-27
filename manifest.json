@@ -1,0 +1,14 @@
+{
+  "name": "Memory — AI memory, in the open.",
+  "short_name": "Memory",
+  "description": "Transparent, controllable AI memory. Know what's remembered, why it exists, and delete it anytime.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1A3929",
+  "theme_color": "#1A3929",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "favicon.jpg", "sizes": "192x192", "type": "image/jpeg" },
+    { "src": "favicon.jpg", "sizes": "512x512", "type": "image/jpeg" }
+  ]
+}
