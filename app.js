@@ -109,7 +109,7 @@ function createChatMessage(role, text) {
 const PROTECTED_SCREENS = [
   'screen-home', 'screen-chat', 'screen-queue', 'screen-vault',
   'screen-detail', 'screen-rooms', 'screen-privacy',
-  'screen-profile', 'screen-admin',
+  'screen-profile', 'screen-admin', 'screen-apikey',
 ];
 const AUTH_SCREENS   = ['screen-login'];
 const PUBLIC_SCREENS = ['screen-splash'];
@@ -117,8 +117,10 @@ const PUBLIC_SCREENS = ['screen-splash'];
 const SCREEN_ORDER = [
   'screen-splash', 'screen-login', 'screen-home', 'screen-chat',
   'screen-queue', 'screen-vault', 'screen-detail', 'screen-rooms',
-  'screen-privacy', 'screen-profile', 'screen-admin',
+  'screen-privacy', 'screen-profile', 'screen-admin', 'screen-apikey',
 ];
+
+let _prevScreenId = null;
 
 function showScreen(id) {
   if (PROTECTED_SCREENS.includes(id) && !AppState.isAuthenticated) {
@@ -128,19 +130,31 @@ function showScreen(id) {
     showScreen('screen-home'); return;
   }
 
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const prevId = _prevScreenId;
+  const prevIdx = SCREEN_ORDER.indexOf(prevId);
+  const nextIdx = SCREEN_ORDER.indexOf(id);
+
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active', 'slide-right', 'slide-left', 'slide-up');
+  });
+
   const target = document.getElementById(id);
   if (target) {
     target.classList.add('active');
+    // Directional animation
+    if (id === 'screen-detail') {
+      target.classList.add('slide-up');
+    } else if (prevIdx >= 0 && nextIdx >= 0) {
+      target.classList.add(nextIdx > prevIdx ? 'slide-right' : 'slide-left');
+    }
     const scroll = target.querySelector('.screen-scroll');
     if (scroll) scroll.scrollTop = 0;
   }
-  // Sync dot switcher
-  document.querySelectorAll('.dot-btn').forEach(d => {
-    d.classList.toggle('active', d.dataset.screen === id);
-  });
+  _prevScreenId = id;
   // Re-render the screen being shown
   onScreenEnter(id);
+  // Persist state
+  saveState();
 }
 
 function onScreenEnter(id) {
@@ -154,6 +168,7 @@ function onScreenEnter(id) {
     case 'screen-profile': renderProfile(); break;
     case 'screen-admin':   renderAdmin();   break;
     case 'screen-detail':  renderDetail();  break;
+    case 'screen-apikey':  renderApiKeyScreen(); break;
   }
 }
 
@@ -243,6 +258,8 @@ function handleLogout() {
   AppState.chatMessages = [];
   AppState.currentDraft = null;
   AppState.vaultFilter = 'all';
+  // Clear persisted session
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
   showScreen('screen-splash');
 }
 
@@ -256,12 +273,14 @@ function togglePassword() {
   const pw  = document.getElementById('login-password');
   const eye = document.getElementById('pw-eye');
   if (!pw || !eye) return;
+  // BUG FIX: must set href on the <use> element inside the svg, not the svg itself
+  const useEl = eye.querySelector('use') || eye;
   if (pw.type === 'password') {
     pw.type = 'text'; pw.style.letterSpacing = '0';
-    eye.setAttribute('href', '#ic-eye-off');
+    useEl.setAttribute('href', '#ic-eye-off');
   } else {
     pw.type = 'password'; pw.style.letterSpacing = '2px';
-    eye.setAttribute('href', '#ic-eye');
+    useEl.setAttribute('href', '#ic-eye');
   }
 }
 
@@ -336,7 +355,171 @@ function rejectPending(id) {
 }
 
 /* ════════════════════════════════════════════════
-   8. CHAT LOGIC
+   8a. GEMINI API MODULE
+   Key stored per-user in localStorage (separate key).
+   Falls back to demo responses when no key set.
+════════════════════════════════════════════════ */
+const GEMINI_KEY_STORAGE = 'memory_gemini_api_key';
+const GEMINI_MODEL       = 'gemini-2.0-flash';
+const GEMINI_ENDPOINT    = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+
+function getGeminiKey() {
+  try { return localStorage.getItem(GEMINI_KEY_STORAGE) || ''; } catch(e) { return ''; }
+}
+
+function saveGeminiKey() {
+  const inp = document.getElementById('gemini-key-input');
+  if (!inp) return;
+  const key = inp.value.trim();
+  if (!key) { showKeyFeedback('error', 'Please paste your API key first.'); return; }
+  if (!key.startsWith('AIza')) { showKeyFeedback('warn', 'Key looks unusual — Gemini keys usually start with "AIza". Saved anyway.'); }
+  try {
+    localStorage.setItem(GEMINI_KEY_STORAGE, key);
+    showKeyFeedback('success', '✓ Key saved! Tap “Test connection” to verify it works.');
+    renderApiKeyScreen();
+    renderProfile();
+  } catch(e) { showKeyFeedback('error', 'Could not save — storage may be full.'); }
+}
+
+function removeGeminiKey() {
+  try { localStorage.removeItem(GEMINI_KEY_STORAGE); } catch(e) {}
+  const inp = document.getElementById('gemini-key-input');
+  if (inp) inp.value = '';
+  showKeyFeedback('info', 'API key removed. App will use demo responses.');
+  renderApiKeyScreen();
+  renderProfile();
+}
+
+function toggleGeminiKeyVisibility() {
+  const inp = document.getElementById('gemini-key-input');
+  const eye = document.getElementById('gemini-key-eye');
+  if (!inp || !eye) return;
+  const useEl = eye.querySelector('use') || eye;
+  if (inp.type === 'password') {
+    inp.type = 'text'; inp.style.letterSpacing = '0';
+    useEl.setAttribute('href', '#ic-eye-off');
+  } else {
+    inp.type = 'password'; inp.style.letterSpacing = '1px';
+    useEl.setAttribute('href', '#ic-eye');
+  }
+}
+
+function showKeyFeedback(type, msg) {
+  const el = document.getElementById('gemini-key-feedback');
+  if (!el) return;
+  const styles = {
+    success: { bg: 'var(--green-pale)',  color: 'var(--green)' },
+    error:   { bg: 'var(--red-pale)',    color: 'var(--red)' },
+    warn:    { bg: 'var(--amber-pale)',  color: 'var(--amber)' },
+    info:    { bg: 'var(--panel)',       color: 'var(--text-muted)' },
+  };
+  const s = styles[type] || styles.info;
+  el.style.display = 'block';
+  el.style.background = s.bg;
+  el.style.color = s.color;
+  el.textContent = msg;
+}
+
+async function testGeminiKey() {
+  const btn = document.getElementById('gemini-test-btn');
+  const key = getGeminiKey();
+  const inp = document.getElementById('gemini-key-input');
+  const testKey = (inp?.value.trim()) || key;
+  if (!testKey) { showKeyFeedback('error', 'No API key to test. Save a key first.'); return; }
+
+  if (btn) { btn.textContent = 'Testing...'; btn.disabled = true; }
+  showKeyFeedback('info', 'Sending test request to Gemini...');
+
+  try {
+    const res = await fetch(`${GEMINI_ENDPOINT}?key=${testKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: 'Reply with exactly: OK' }] }],
+        generationConfig: { maxOutputTokens: 10 },
+      }),
+    });
+    if (res.ok) {
+      showKeyFeedback('success', '✓ Connection successful! Your Gemini key is working.');
+      // Auto-save if tested from input
+      if (inp?.value.trim()) {
+        localStorage.setItem(GEMINI_KEY_STORAGE, testKey);
+        renderApiKeyScreen(); renderProfile();
+      }
+    } else {
+      const err = await res.json().catch(() => ({}));
+      const msg = err?.error?.message || `HTTP ${res.status}`;
+      showKeyFeedback('error', `✕ Test failed: ${msg}`);
+    }
+  } catch(e) {
+    showKeyFeedback('error', `✕ Network error — check your connection. (${e.message})`);
+  } finally {
+    if (btn) { btn.textContent = 'Test connection'; btn.disabled = false; }
+  }
+}
+
+function renderApiKeyScreen() {
+  const key = getGeminiKey();
+  const hasKey = !!key;
+
+  // Status indicator
+  const dot  = document.getElementById('api-status-dot');
+  const text = document.getElementById('api-status-text');
+  const sub  = document.getElementById('api-status-sub');
+  const badge = document.getElementById('apikey-badge');
+  const inp  = document.getElementById('gemini-key-input');
+
+  if (hasKey) {
+    if (dot)  { dot.style.background = 'var(--green-dot)'; dot.style.animation = 'dotBlink 2s infinite'; }
+    if (text) text.textContent = 'Gemini AI connected';
+    if (sub)  sub.textContent  = `Key: ${key.slice(0,8)}…${key.slice(-4)}`;
+    if (badge) badge.style.display = 'block';
+    if (inp && !inp.value) inp.placeholder = key.slice(0,8) + '…' + key.slice(-4);
+  } else {
+    if (dot)  { dot.style.background = '#D0CCC4'; dot.style.animation = 'none'; }
+    if (text) text.textContent = 'No API key configured';
+    if (sub)  sub.textContent  = 'Add your key below to enable real AI responses';
+    if (badge) badge.style.display = 'none';
+    if (inp) inp.placeholder = 'AIza...';
+  }
+}
+
+/* Real Gemini API call — used by sendChatMessage when key is present */
+async function askGemini(userMessage) {
+  const key = getGeminiKey();
+  if (!key) return null; // fall back to demo
+
+  // Build context from memories so AI is aware
+  const memContext = AppState.memories.length > 0
+    ? `\n\nUser's saved memories (use these for context):\n${AppState.memories.filter(m=>m.status==='active').map(m=>`- [${m.room}] ${m.text}`).join('\n')}`
+    : '';
+
+  const systemPrompt = `You are a friendly AI assistant for the Memory app. Your job is to chat with the user, understand things they share about themselves, and suggest saving useful information as a "memory".\n\nWhen the user shares something personal (a preference, habit, goal, or fact about themselves), respond helpfully AND end with a question like "Shall I save that as a memory?" or "Want me to remember that?".\n\nKeep responses concise (2-4 sentences max).${memContext}`;
+
+  try {
+    const res = await fetch(`${GEMINI_ENDPOINT}?key=${key}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [
+          ...AppState.chatMessages.slice(-6).map(m => ({
+            role: m.role === 'user' ? 'user' : 'model',
+            parts: [{ text: m.text }],
+          })),
+          { role: 'user', parts: [{ text: userMessage }] },
+        ],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        generationConfig: { maxOutputTokens: 200, temperature: 0.8 },
+      }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || null;
+  } catch(e) { return null; }
+}
+
+/* ════════════════════════════════════════════════
+   8b. CHAT LOGIC (updated to use Gemini when available)
 ════════════════════════════════════════════════ */
 const AI_RESPONSES = [
   "Got it! That's helpful context. Shall I save that as a memory?",
@@ -350,7 +533,7 @@ const AI_RESPONSES = [
 let aiResponseIndex = 0;
 let chatDraftTimeout = null;
 
-function sendChatMessage() {
+async function sendChatMessage() {
   const input = document.getElementById('chat-input');
   if (!input) return;
   const text = input.value.trim();
@@ -371,16 +554,34 @@ function sendChatMessage() {
     return;
   }
 
-  // AI response after 700ms
-  setTimeout(() => {
-    const reply = AI_RESPONSES[aiResponseIndex % AI_RESPONSES.length];
-    aiResponseIndex++;
-    AppState.chatMessages.push(createChatMessage('ai', reply));
-    renderChat();
+  // Show typing indicator
+  AppState.chatMessages.push(createChatMessage('ai', '⋯'));
+  renderChat();
 
-    // Show draft card after another 400ms
+  const hasKey = !!getGeminiKey();
+
+  let reply;
+  if (hasKey) {
+    // Real Gemini API response
+    reply = await askGemini(text);
+  }
+
+  // Remove typing indicator
+  AppState.chatMessages = AppState.chatMessages.filter(m => m.text !== '⋯');
+
+  if (!reply) {
+    // Fallback to demo responses
+    reply = AI_RESPONSES[aiResponseIndex % AI_RESPONSES.length];
+    aiResponseIndex++;
+  }
+
+  AppState.chatMessages.push(createChatMessage('ai', reply));
+  renderChat();
+
+  // Show draft card after 400ms (only if response suggests saving)
+  const suggestsSave = /save|remember|memory|keep/i.test(reply);
+  if (suggestsSave || !hasKey) {
     setTimeout(() => {
-      // Default to first enabled room
       const defaultRoom = AppState.rooms.find(r => r.enabled);
       AppState.currentDraft = {
         text:      text,
@@ -389,7 +590,8 @@ function sendChatMessage() {
       };
       renderChatDraft();
     }, 400);
-  }, 700);
+  }
+  saveState();
 }
 
 function keepDraftMemory() {
@@ -880,6 +1082,16 @@ function renderProfile() {
   setText('profile-row-joined',   joined);
   setText('profile-stat-memories', AppState.memories.length);
   setText('profile-stat-joined', new Date(u.joinedAt).toLocaleDateString('en-US', { month: 'short' }));
+  // BUG FIX: show actual room count instead of hardcoded 3
+  const roomsStatEl = document.querySelector('#screen-profile .screen-scroll [style*="border-radius:8px"] div:nth-child(2) div:first-child');
+  if (roomsStatEl) roomsStatEl.textContent = AppState.rooms.length;
+  // Update Gemini API status in profile row
+  const apiStatusEl = document.getElementById('profile-api-status');
+  if (apiStatusEl) {
+    const hasKey = !!getGeminiKey();
+    apiStatusEl.textContent = hasKey ? '✓ Connected' : 'Not configured';
+    apiStatusEl.style.color = hasKey ? 'var(--green)' : 'var(--text-muted)';
+  }
 }
 
 /* -- Detail ------------------------------------------ */
@@ -1086,10 +1298,59 @@ function initSwipeNav() {
    15. SPLASH AUTO-ADVANCE
 ════════════════════════════════════════════════ */
 function initSplashTimer() {
+  // Only auto-advance if user hasn't tapped anything yet
   setTimeout(() => {
     const cur = document.querySelector('.screen.active');
-    if (cur?.id === 'screen-splash') showScreen('screen-login');
+    if (cur && cur.id === 'screen-splash') {
+      showScreen('screen-login');
+    }
   }, 2800);
+}
+
+/* ════════════════════════════════════════════════
+   17. STATE PERSISTENCE (localStorage)
+   Stores state for 30-day GitHub Pages demo.
+════════════════════════════════════════════════ */
+const STORAGE_KEY = 'memory_app_state_v1';
+
+function saveState() {
+  if (!AppState.isAuthenticated) return;
+  try {
+    const snapshot = {
+      isAuthenticated: AppState.isAuthenticated,
+      user:            AppState.user,
+      rooms:           AppState.rooms,
+      memories:        AppState.memories,
+      pendingMemories: AppState.pendingMemories,
+      activityLog:     AppState.activityLog,
+      vaultFilter:     AppState.vaultFilter,
+      chatMessages:    AppState.chatMessages,
+      savedAt:         Date.now(),
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+  } catch(e) { /* storage full – ignore */ }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const snap = JSON.parse(raw);
+    // Expire after 30 days
+    if (Date.now() - snap.savedAt > 30 * 24 * 60 * 60 * 1000) {
+      localStorage.removeItem(STORAGE_KEY); return false;
+    }
+    if (!snap.isAuthenticated) return false;
+    AppState.isAuthenticated = true;
+    AppState.user            = snap.user;
+    AppState.rooms           = snap.rooms           || [];
+    AppState.memories        = snap.memories        || [];
+    AppState.pendingMemories = snap.pendingMemories || [];
+    AppState.activityLog     = snap.activityLog     || [];
+    AppState.vaultFilter     = snap.vaultFilter     || 'all';
+    AppState.chatMessages    = snap.chatMessages    || [];
+    return true;
+  } catch(e) { return false; }
 }
 
 /* ════════════════════════════════════════════════
@@ -1101,6 +1362,18 @@ document.addEventListener('DOMContentLoaded', () => {
   initStaticFilterTabs();
   initKeyboardNav();
   initSwipeNav();
-  initSplashTimer();
-  showScreen('screen-splash');
+
+  // Try restoring saved session (30-day demo)
+  const restored = loadState();
+  if (restored) {
+    // Jump straight to home if already logged in
+    renderAll();
+    showScreen('screen-home');
+  } else {
+    initSplashTimer();
+    showScreen('screen-splash');
+  }
+
+  // Also save on memory changes
+  const _origAddMemory = addMemory;
 });
