@@ -162,7 +162,10 @@ function onScreenEnter(id) {
     case 'screen-home':    renderHome();    break;
     case 'screen-vault':   renderVault();   break;
     case 'screen-queue':   renderQueue();   break;
-    case 'screen-chat':    renderChat();    break;
+    case 'screen-chat':
+      renderChat();
+      if (typeof toggleGboard === 'function') toggleGboard(true);
+      break;
     case 'screen-rooms':   renderRooms();   break;
     case 'screen-privacy': renderPrivacyActivity(); break;
     case 'screen-profile': renderProfile(); break;
@@ -1377,3 +1380,136 @@ document.addEventListener('DOMContentLoaded', () => {
   // Also save on memory changes
   const _origAddMemory = addMemory;
 });
+
+/* ════════════════════════════════════════════════
+   18. LIVE IN-APP GOOGLE KEYBOARD (GBOARD)
+════════════════════════════════════════════════ */
+let gboardShiftActive = false;
+let gboardShiftLocked = false;
+let gboardLastShiftTap = 0;
+
+function toggleGboard(show) {
+  const kb = document.getElementById('gboard-keyboard');
+  const nav = document.getElementById('chat-bottom-nav');
+  if (!kb) return;
+
+  if (show === undefined) {
+    show = kb.classList.contains('hidden');
+  }
+
+  if (show) {
+    kb.classList.remove('hidden');
+    if (nav) nav.style.display = 'none';
+    const scrollEl = document.getElementById('chat-messages-wrap');
+    if (scrollEl) setTimeout(() => { scrollEl.scrollTop = scrollEl.scrollHeight; }, 60);
+  } else {
+    kb.classList.add('hidden');
+    if (nav) nav.style.display = 'flex';
+  }
+}
+
+function gboardTypeChar(char) {
+  const input = document.getElementById('chat-input');
+  if (!input) return;
+
+  let outChar = char;
+  if (gboardShiftActive) {
+    outChar = char.toUpperCase();
+    if (!gboardShiftLocked) {
+      gboardShiftActive = false;
+      updateGboardShiftUi();
+    }
+  }
+
+  // Insert character at cursor selection or append
+  const start = input.selectionStart ?? input.value.length;
+  const end = input.selectionEnd ?? input.value.length;
+  const val = input.value;
+  input.value = val.substring(0, start) + outChar + val.substring(end);
+  const newPos = start + outChar.length;
+  input.setSelectionRange(newPos, newPos);
+  input.focus();
+}
+
+function gboardBackspace() {
+  const input = document.getElementById('chat-input');
+  if (!input) return;
+
+  const start = input.selectionStart ?? input.value.length;
+  const end = input.selectionEnd ?? input.value.length;
+  const val = input.value;
+
+  if (start !== end) {
+    input.value = val.substring(0, start) + val.substring(end);
+    input.setSelectionRange(start, start);
+  } else if (start > 0) {
+    input.value = val.substring(0, start - 1) + val.substring(start);
+    input.setSelectionRange(start - 1, start - 1);
+  }
+  input.focus();
+}
+
+function gboardToggleShift() {
+  const now = Date.now();
+  if (now - gboardLastShiftTap < 300) {
+    // Double tap -> Caps Lock
+    gboardShiftLocked = !gboardShiftLocked;
+    gboardShiftActive = gboardShiftLocked;
+  } else {
+    gboardShiftLocked = false;
+    gboardShiftActive = !gboardShiftActive;
+  }
+  gboardLastShiftTap = now;
+  updateGboardShiftUi();
+}
+
+function updateGboardShiftUi() {
+  const shiftBtn = document.getElementById('gboard-shift-btn');
+  if (shiftBtn) {
+    if (gboardShiftActive) {
+      shiftBtn.classList.add('gb-shift-active');
+    } else {
+      shiftBtn.classList.remove('gb-shift-active');
+    }
+  }
+
+  // Update visible characters on letter keys
+  document.querySelectorAll('#gboard-letters .gb-key[data-char]').forEach(key => {
+    const ch = key.getAttribute('data-char');
+    const charSpan = key.querySelector('.gb-char');
+    if (charSpan && ch) {
+      charSpan.textContent = gboardShiftActive ? ch.toUpperCase() : ch.toLowerCase();
+    }
+  });
+}
+
+function gboardToggleMode(mode) {
+  const letters = document.getElementById('gboard-letters');
+  const symbols = document.getElementById('gboard-symbols');
+  if (!letters || !symbols) return;
+
+  if (mode === 'symbols') {
+    letters.style.display = 'none';
+    symbols.style.display = 'flex';
+  } else {
+    letters.style.display = 'flex';
+    symbols.style.display = 'none';
+  }
+}
+
+function gboardInsertSuggestion(text) {
+  const input = document.getElementById('chat-input');
+  if (!input) return;
+  input.value += (input.value.length > 0 && !input.value.endsWith(' ') ? ' ' : '') + text;
+  input.focus();
+}
+
+function gboardVoiceHint() {
+  const input = document.getElementById('chat-input');
+  if (input) {
+    input.placeholder = 'Listening... Speak or type';
+    setTimeout(() => {
+      input.placeholder = 'Tell me something about yourself...';
+    }, 2000);
+  }
+}
