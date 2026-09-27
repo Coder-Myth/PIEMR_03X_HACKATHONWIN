@@ -104,6 +104,208 @@
 /* Stat card hover */
 .stat-card { transition: transform 0.15s, box-shadow 0.15s; cursor: default; }
 .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+
+/* ── GOOGLE KEYBOARD (GBOARD) LIVE IN-APP ──────── */
+.gboard-container {
+  display: flex;
+  flex-direction: column;
+  background: #ECEFF1;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  user-select: none;
+  -webkit-user-select: none;
+  flex-shrink: 0;
+  transition: transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.18s ease;
+  z-index: 100;
+}
+.gboard-container.hidden {
+  display: none !important;
+}
+
+/* Suggestion & Toolbar */
+.gboard-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 8px;
+  background: #E3E7EA;
+  gap: 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.gboard-g-badge {
+  color: #5F6368;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 4px;
+}
+.gboard-suggestions {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.gboard-suggestions::-webkit-scrollbar { display: none; }
+.gboard-chip {
+  background: #FFFFFF;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 14px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.1s, transform 0.08s;
+  font-family: inherit;
+}
+.gboard-chip:active {
+  background: #D1D5DB;
+  transform: scale(0.96);
+}
+.gboard-tool-icons {
+  display: flex;
+  align-items: center;
+  color: #5F6368;
+}
+.gboard-icon-btn {
+  background: transparent;
+  border: none;
+  color: #5F6368;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.gboard-icon-btn:active {
+  background: rgba(0,0,0,0.08);
+}
+
+/* Keys container */
+.gboard-keys-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 4px 4px;
+}
+.gboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+}
+.gboard-row-stagger {
+  padding: 0 12px;
+}
+.gb-key {
+  height: 40px;
+  flex: 1;
+  min-width: 0;
+  background: #FFFFFF;
+  border-radius: 6px;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 17px;
+  font-weight: 400;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Google Sans", sans-serif;
+  color: #1F2937;
+  cursor: pointer;
+  box-shadow: 0 1.5px 0.5px rgba(0, 0, 0, 0.22);
+  transition: transform 0.06s, background 0.06s;
+  touch-action: manipulation;
+}
+.gb-key:active {
+  background: #DFE3E6;
+  transform: scale(0.92) translateY(1px);
+}
+.gb-hint {
+  position: absolute;
+  top: 1px;
+  right: 3px;
+  font-size: 9px;
+  color: #9CA3AF;
+  font-weight: 500;
+}
+.gb-hint-sub {
+  position: absolute;
+  bottom: 2px;
+  right: 3px;
+  font-size: 9px;
+  color: #9CA3AF;
+}
+.gb-action-key {
+  background: #D2D7DC;
+  color: #374151;
+  flex: 1.4;
+  font-size: 13px;
+  font-weight: 600;
+}
+.gb-action-key:active {
+  background: #BAC0C6;
+}
+.gb-shift-active {
+  background: #1F2937 !important;
+  color: #FFFFFF !important;
+}
+.gb-shift-active svg path {
+  fill: #FFFFFF;
+  stroke: #FFFFFF;
+}
+.gb-space-key {
+  flex: 4.8;
+  max-width: 190px;
+  font-size: 12px;
+  color: #6B7280;
+  font-weight: 400;
+}
+.gb-space-key span {
+  opacity: 0.7;
+}
+.gb-enter-key {
+  background: #3D7A58;
+  flex: 1.6;
+  border-radius: 6px;
+  box-shadow: 0 1.5px 0.5px rgba(0, 0, 0, 0.28);
+}
+.gb-enter-key:active {
+  background: #2D5C42;
+}
+
+/* Bottom Android dismiss bar */
+.gboard-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 14px 6px;
+  background: #ECEFF1;
+}
+.gb-hide-btn {
+  background: transparent;
+  border: none;
+  color: #6B7280;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.gb-hide-btn:active {
+  background: rgba(0,0,0,0.08);
+}
+.gb-home-indicator {
+  width: 72px;
+  height: 4px;
+  background: #9CA3AF;
+  border-radius: 2px;
+  opacity: 0.6;
+}
 </style>
 </head>
 <body>
@@ -380,14 +582,149 @@
       <div class="composer-plus" onclick="showAddMemoryForm()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-plus"/></svg>
       </div>
-      <input type="text" id="chat-input" class="composer-input" placeholder="Tell me something about yourself..." style="border:none;outline:none;font-family:'Inter',sans-serif;">
+      <input type="text" id="chat-input" class="composer-input" placeholder="Tell me something about yourself..." style="border:none;outline:none;font-family:'Inter',sans-serif;" onclick="toggleGboard(true)">
       <button class="composer-send" onclick="sendChatMessage()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><use href="#ic-send"/></svg>
       </button>
     </div>
-    <nav class="bottom-nav">
+
+    <!-- Android Google Keyboard (Gboard) — Live In-App -->
+    <div class="gboard-container" id="gboard-keyboard">
+      <!-- Gboard Suggestion & Tool Bar -->
+      <div class="gboard-bar">
+        <div class="gboard-g-badge" title="Google Gboard">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.52 0 10-4.48 10-10 0-.69-.07-1.35-.2-2H12v3.7h5.65c-.56 2.05-2.4 3.3-5.65 3.3-3.31 0-6-2.69-6-6s2.69-6 6-6c1.47 0 2.82.54 3.86 1.43l2.8-2.8C16.89 3.1 14.59 2 12 2z"/>
+          </svg>
+        </div>
+        <div class="gboard-suggestions" id="gboard-suggestions">
+          <button class="gboard-chip" type="button" onclick="gboardInsertSuggestion('I prefer ')">I prefer</button>
+          <button class="gboard-chip" type="button" onclick="gboardInsertSuggestion('Remember that ')">Remember that</button>
+          <button class="gboard-chip" type="button" onclick="gboardInsertSuggestion('My goal is ')">My goal is</button>
+          <button class="gboard-chip" type="button" onclick="gboardInsertSuggestion('I work as ')">I work as</button>
+        </div>
+        <div class="gboard-tool-icons">
+          <button class="gboard-icon-btn" type="button" title="Voice Input" onclick="gboardVoiceHint()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Letter Keys Mode -->
+      <div class="gboard-keys-wrap" id="gboard-letters">
+        <div class="gboard-row">
+          <button class="gb-key" type="button" data-char="q" onclick="gboardTypeChar('q')"><span class="gb-char">q</span><span class="gb-hint">1</span></button>
+          <button class="gb-key" type="button" data-char="w" onclick="gboardTypeChar('w')"><span class="gb-char">w</span><span class="gb-hint">2</span></button>
+          <button class="gb-key" type="button" data-char="e" onclick="gboardTypeChar('e')"><span class="gb-char">e</span><span class="gb-hint">3</span></button>
+          <button class="gb-key" type="button" data-char="r" onclick="gboardTypeChar('r')"><span class="gb-char">r</span><span class="gb-hint">4</span></button>
+          <button class="gb-key" type="button" data-char="t" onclick="gboardTypeChar('t')"><span class="gb-char">t</span><span class="gb-hint">5</span></button>
+          <button class="gb-key" type="button" data-char="y" onclick="gboardTypeChar('y')"><span class="gb-char">y</span><span class="gb-hint">6</span></button>
+          <button class="gb-key" type="button" data-char="u" onclick="gboardTypeChar('u')"><span class="gb-char">u</span><span class="gb-hint">7</span></button>
+          <button class="gb-key" type="button" data-char="i" onclick="gboardTypeChar('i')"><span class="gb-char">i</span><span class="gb-hint">8</span></button>
+          <button class="gb-key" type="button" data-char="o" onclick="gboardTypeChar('o')"><span class="gb-char">o</span><span class="gb-hint">9</span></button>
+          <button class="gb-key" type="button" data-char="p" onclick="gboardTypeChar('p')"><span class="gb-char">p</span><span class="gb-hint">0</span></button>
+        </div>
+        <div class="gboard-row gboard-row-stagger">
+          <button class="gb-key" type="button" data-char="a" onclick="gboardTypeChar('a')"><span class="gb-char">a</span></button>
+          <button class="gb-key" type="button" data-char="s" onclick="gboardTypeChar('s')"><span class="gb-char">s</span></button>
+          <button class="gb-key" type="button" data-char="d" onclick="gboardTypeChar('d')"><span class="gb-char">d</span></button>
+          <button class="gb-key" type="button" data-char="f" onclick="gboardTypeChar('f')"><span class="gb-char">f</span></button>
+          <button class="gb-key" type="button" data-char="g" onclick="gboardTypeChar('g')"><span class="gb-char">g</span></button>
+          <button class="gb-key" type="button" data-char="h" onclick="gboardTypeChar('h')"><span class="gb-char">h</span></button>
+          <button class="gb-key" type="button" data-char="j" onclick="gboardTypeChar('j')"><span class="gb-char">j</span></button>
+          <button class="gb-key" type="button" data-char="k" onclick="gboardTypeChar('k')"><span class="gb-char">k</span></button>
+          <button class="gb-key" type="button" data-char="l" onclick="gboardTypeChar('l')"><span class="gb-char">l</span></button>
+        </div>
+        <div class="gboard-row">
+          <button class="gb-key gb-action-key" type="button" id="gboard-shift-btn" onclick="gboardToggleShift()" title="Shift">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 4L4 13h5v7h6v-7h5L12 4z"/></svg>
+          </button>
+          <button class="gb-key" type="button" data-char="z" onclick="gboardTypeChar('z')"><span class="gb-char">z</span></button>
+          <button class="gb-key" type="button" data-char="x" onclick="gboardTypeChar('x')"><span class="gb-char">x</span></button>
+          <button class="gb-key" type="button" data-char="c" onclick="gboardTypeChar('c')"><span class="gb-char">c</span></button>
+          <button class="gb-key" type="button" data-char="v" onclick="gboardTypeChar('v')"><span class="gb-char">v</span></button>
+          <button class="gb-key" type="button" data-char="b" onclick="gboardTypeChar('b')"><span class="gb-char">b</span></button>
+          <button class="gb-key" type="button" data-char="n" onclick="gboardTypeChar('n')"><span class="gb-char">n</span></button>
+          <button class="gb-key" type="button" data-char="m" onclick="gboardTypeChar('m')"><span class="gb-char">m</span></button>
+          <button class="gb-key gb-action-key" type="button" onclick="gboardBackspace()" title="Backspace">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+          </button>
+        </div>
+        <div class="gboard-row">
+          <button class="gb-key gb-action-key" type="button" onclick="gboardToggleMode('symbols')">?123</button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar(',')">,<span class="gb-hint-sub">☺</span></button>
+          <button class="gb-key gb-space-key" type="button" onclick="gboardTypeChar(' ')"><span>English</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('.')">.</button>
+          <button class="gb-key gb-enter-key" type="button" onclick="sendChatMessage()" title="Send">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" stroke-width="2.2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Symbols & Numbers Mode -->
+      <div class="gboard-keys-wrap" id="gboard-symbols" style="display:none;">
+        <div class="gboard-row">
+          <button class="gb-key" type="button" onclick="gboardTypeChar('1')"><span class="gb-char">1</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('2')"><span class="gb-char">2</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('3')"><span class="gb-char">3</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('4')"><span class="gb-char">4</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('5')"><span class="gb-char">5</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('6')"><span class="gb-char">6</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('7')"><span class="gb-char">7</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('8')"><span class="gb-char">8</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('9')"><span class="gb-char">9</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('0')"><span class="gb-char">0</span></button>
+        </div>
+        <div class="gboard-row">
+          <button class="gb-key" type="button" onclick="gboardTypeChar('@')"><span class="gb-char">@</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('#')"><span class="gb-char">#</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('$')"><span class="gb-char">$</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('%')"><span class="gb-char">%</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('&amp;')"><span class="gb-char">&amp;</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('-')"><span class="gb-char">-</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('+')"><span class="gb-char">+</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('(')"><span class="gb-char">(</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar(')')"><span class="gb-char">)</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('/')"><span class="gb-char">/</span></button>
+        </div>
+        <div class="gboard-row">
+          <button class="gb-key gb-action-key" type="button" onclick="gboardTypeChar('=')"><span class="gb-char">=\&lt;</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('*')"><span class="gb-char">*</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('&quot;')"><span class="gb-char">&quot;</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('\'')"><span class="gb-char">'</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar(':')"><span class="gb-char">:</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar(';')"><span class="gb-char">;</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('!')"><span class="gb-char">!</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('?')"><span class="gb-char">?</span></button>
+          <button class="gb-key gb-action-key" type="button" onclick="gboardBackspace()" title="Backspace">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+          </button>
+        </div>
+        <div class="gboard-row">
+          <button class="gb-key gb-action-key" type="button" onclick="gboardToggleMode('letters')">ABC</button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar(',')">,</button>
+          <button class="gb-key gb-space-key" type="button" onclick="gboardTypeChar(' ')"><span>English</span></button>
+          <button class="gb-key" type="button" onclick="gboardTypeChar('.')">.</button>
+          <button class="gb-key gb-enter-key" type="button" onclick="sendChatMessage()" title="Send">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" stroke-width="2.2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Android Dismiss Bar -->
+      <div class="gboard-bottom-bar">
+        <button class="gb-hide-btn" type="button" onclick="toggleGboard(false)" title="Hide keyboard">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="gb-home-indicator"></div>
+        <div style="width:24px;"></div>
+      </div>
+    </div>
+
+    <!-- Screen Chat Bottom Nav (shown when keyboard is dismissed) -->
+    <nav class="bottom-nav" id="chat-bottom-nav" style="display:none;">
       <div class="nav-item" onclick="showScreen('screen-home')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-home"/></svg><span>Home</span></div>
-      <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><use href="#ic-chat"/></svg><span>Chat</span></div>
+      <div class="nav-item active" onclick="toggleGboard(true)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><use href="#ic-chat"/></svg><span>Chat</span></div>
       <div class="nav-item" onclick="showScreen('screen-vault')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-vault"/></svg><span>Vault</span></div>
       <div class="nav-item" onclick="showScreen('screen-privacy')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><use href="#ic-shield"/></svg><span>Privacy</span></div>
     </nav>
